@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapi-deployment
+spec:
+  selector:
+    matchLabels:
+      app: webapi-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapi-app
+    spec:
+      containers:
+      - name: webapi
+        image: lidorabo/docker_repo:intweb_1.0.1
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webapi-app
+  name: webapi-svc
+  namespace: default
+spec:
+  type: NodePort    # use LoadBalancer as type here
+  externalIPs:
+     - 10.0.2.141
+  ports:
+    - port: 5000
+      nodePort: 30000
+      name: http
+  selector:
+    app: webapi-app
